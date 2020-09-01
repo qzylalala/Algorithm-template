@@ -140,7 +140,7 @@
   {
       int t = u;
       if (u * 2 <= size && h[u * 2] < h[t]) t = u * 2;
-      if (u * 2 + 1 <= size && h[u * 2 + 1] < h[t]) t = u * 2 + 1;
+      if (u * 2 + 1 <= size && h[u * 2 + 1] < h[t]) t = u * 2 + 1;  // 用 h[t] 比较，取三者最小值
       if (u != t)
       {
           heap_swap(u, t);
