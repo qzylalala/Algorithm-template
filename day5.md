@@ -80,8 +80,8 @@
           size[i] = 1;
       }
   
-      // 合并a和b所在的两个集合：
-      size[find(b)] += size[find(a)];
+      // 合并a和b所在的两个集合, 必须先修改size, 再修改父节点。
+      size[find(b)] += size[find(a)];    // 这行必须在前 
       p[find(a)] = find(b);
   
   
