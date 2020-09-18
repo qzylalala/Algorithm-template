@@ -52,7 +52,7 @@ int n,m,s,t,u,v;   // n点  m边  s源点  t汇点  u->v
 long long w,ans,dis[520010]; // w边权   ans最大流  dis->深度
 int tot = 1, now[520010], head[520010]; 
 // tot 加边计数器     
-// now   ?         
+// now 当前弧优化,记录当前节点(i) 循环到了哪一条边 (now[i])       
 // head[x] -> 节点 x 对应的最后一条边 的序号
 // e[head[x]].net  ->  节点 x 对应的 倒数第二条边 的序号
 // 节点 x 对应的 第一条边的序号 满足 e[最后一条边的序号].net = 0;
