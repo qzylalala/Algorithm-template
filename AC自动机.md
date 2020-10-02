@@ -20,19 +20,19 @@ struct Tree//字典树
      int vis[26];//子节点的位置
      int end;//标记有几个单词以这个节点结尾 
 }AC[1000010];//Trie树
-int cnt=0;//Trie的指针 
+int cnt = 0;//Trie的指针 
 
 inline void Build(string s)
 {
-        int l=s.length();
-        int now=0;//字典树的当前指针 
-        for(int i=0;i<l;++i)//构造Trie树
+        int len = s.length();
+        int now = 0;//字典树的当前指针 
+        for(int i = 0; i < len; ++i)//构造Trie树
         {
-                if(AC[now].vis[s[i]-'a']==0)//Trie树没有这个子节点
-                   AC[now].vis[s[i]-'a']=++cnt;//构造出来
-                now=AC[now].vis[s[i]-'a'];//向下构造 
+                if(AC[now].vis[s[i]-'a'] == 0)//Trie树没有这个子节点
+                   AC[now].vis[s[i]-'a']= ++cnt;//构造出来
+                now = AC[now].vis[s[i]-'a'];//向下构造 
         }
-        AC[now].end+=1;//标记单词结尾 
+        AC[now].end += 1;//标记单词结尾 
 }
 
 void Get_fail()//构造fail指针
