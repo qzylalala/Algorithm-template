@@ -65,7 +65,7 @@ int query(string s)//AC自动机匹配
 {
         int l = s.length();
         int now = 0,ans = 0;
-        for(int i = 0; i < l; ++i)
+        for(int i = 0; i < len; ++i)
         {
                 now = AC[now].son[s[i]-'a'];//向下一层
                 for(int t = now; t && AC[t].end != -1; t = AC[t].fail)//循环求解
