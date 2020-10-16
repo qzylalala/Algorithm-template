@@ -40,7 +40,7 @@
 
 
 
-#### 代码实现
+#### 代码实现 1
 
 ```c++
 // 分层图 + DFS  可以处理 10^4 ~ 10^5 规模的网络
@@ -134,6 +134,99 @@ int main() {
 	return 0;
 }
 ```
+
+
+
+
+
+### 代码实现 2
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+
+const LL inf = INT_MAX;
+const int N = 520010;
+int n, m, s, t, now[N];
+LL idx = 1, h[N], ne[N], e[N], val[N], dep[N];
+
+void add(int u, int v, LL w) {
+	e[++idx] = v;
+	val[idx] = w;
+	ne[idx] = h[u];
+	h[u] = idx;
+}
+
+
+int bfs() {  //在残量网络中构造分层图 
+	for(int i = 1; i <= n; i++) dep[i] = inf;
+    
+	queue<int> q;
+	q.push(s);
+	dep[s] = 0;
+	now[s] = h[s];
+    // bfs 分层
+	while(!q.empty()) {
+		int x = q.front();
+		q.pop();
+		for(int i = h[x]; i != -1; i = ne[i]) {   // 循环逻辑看上面 head 注释
+			int v = e[i];
+			if(val[i] > 0 && dep[v] == inf) {   // 正向边 且 节点 v 未访问过
+				q.push(v);
+				now[v] = h[v];
+				dep[v] = dep[x] + 1;              // 深度计算
+				if(v == t) return 1; // 到达汇点, 结束
+			}
+		}
+	}
+	return 0;
+}
+
+
+int dfs(int x, long long sum) {  //sum是整条增广路对最大流的贡献
+	if(x == t) return sum;  // 到达汇点
+	long long k, res = 0;  //k是当前最小的剩余容量 
+	for(int i = now[x]; i != -1 && sum; i = ne[i]) {
+		now[x] = i;  //当前弧优化 
+		int v = e[i];
+		if(val[i] > 0 && (dep[v] == dep[x] + 1)) {
+			k = dfs(v, min(sum, val[i]));
+			if(k == 0) dep[v] = inf;  //剪枝，去掉增广完毕的点 
+			val[i] -= k;
+			val[i^1] += k;
+			res += k;  //res表示经过该点的所有流量和（相当于流出的总量） 
+			sum -= k;  //sum表示经过该点的剩余流量 
+		}
+	}
+	return res;
+}
+
+int main() {
+    // 1. 初始化
+    memset(h, -1, sizeof(h));
+	scanf("%d%d%d%d",&n,&m,&s,&t);
+	for(int i = 1; i <= m;i++) {
+		int u, v;
+		LL w;
+		scanf("%d%d%lld", &u, &v, &w);
+		add(u, v, w);
+		add(v, u, 0);
+	}
+    
+    // 2. bfs 分层   +   dfs 寻找增广路(回溯时 更新边权)
+    LL ans = 0;
+	while(bfs()) {
+		ans += dfs(s, inf);  //流量守恒（流入=流出） 
+	}
+	printf("%lld",ans);
+	return 0;
+}
+```
+
+
+
+
 
 [最大流模板题](https://www.luogu.com.cn/problem/P3376)
 
