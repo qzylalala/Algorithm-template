@@ -24,7 +24,8 @@
 	在任意时刻，网络中所有节点以及剩余容量大于0的边构成的子图被称为残量网络
 
 邻接表“成对存储”
-	将正向边和反向边存在“2和3”、“4和5”、“6和7”。因为在更新边权的时候，我们就可以直接使用xor的方			式，找到对应的正向边和反向边
+	将正向边和反向边存在“2和3”、“4和5”、“6和7”。因为在更新边权的时候，我们就可以直接使用xor的方
+	式，找到对应的正向边和反向边
 ```
 
 
@@ -205,22 +206,22 @@ int dfs(int x, long long sum) {  //sum是整条增广路对最大流的贡献
 int main() {
     // 1. 初始化
     memset(h, -1, sizeof(h));
-	scanf("%d%d%d%d",&n,&m,&s,&t);
-	for(int i = 1; i <= m;i++) {
-		int u, v;
-		LL w;
-		scanf("%d%d%lld", &u, &v, &w);
-		add(u, v, w);
-		add(v, u, 0);
-	}
+    scanf("%d%d%d%d",&n,&m,&s,&t);
+    for(int i = 1; i <= m;i++) {
+	int u, v;
+	LL w;
+	scanf("%d%d%lld", &u, &v, &w);
+	add(u, v, w);
+	add(v, u, 0);
+    }
     
     // 2. bfs 分层   +   dfs 寻找增广路(回溯时 更新边权)
     LL ans = 0;
-	while(bfs()) {
-		ans += dfs(s, inf);  //流量守恒（流入=流出） 
-	}
-	printf("%lld",ans);
-	return 0;
+    while(bfs()) {
+	ans += dfs(s, inf);  //流量守恒（流入=流出） 
+    }
+    printf("%lld",ans);
+    return 0;
 }
 ```
 
