@@ -3,11 +3,25 @@
 * 位运算
 
   ```c++
-  求n的第k位数字: n >> k & 1
-  返回n的最后一位1：lowbit(n) = n & -n     // ex: x = 101010110000  返回值为10000
+  // 求n的第k位数字 
+  n >> k & 1
+      
+// 返回n的最后一位1
+  lowbit(n) = n & -n     // ex: x = 101010110000  返回值为10000
+      
+  
+  // 快速加	求 a * b % p (a 和 b很大)
+  res = 0    
+  while(b) {
+      if(b & 1) res=(res + a) % p;
+      b >>= 1;
+      a = 2 * a % p;
+  }
   ```
-
+  
   [lowbit使用例题](https://www.acwing.com/problem/content/803/)
+  
+  [快速加应用](https://www.acwing.com/problem/content/92/)
 
 
 
