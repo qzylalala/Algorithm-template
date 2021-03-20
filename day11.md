@@ -34,16 +34,7 @@
   
   // 需要初始化 g[][] : 
   // 			g[i][i] = 0,  g[i][j] = INF
-```
-  
-  [Prim求最小生成树](https://www.acwing.com/problem/content/860/)
-
-
-
-
-
-
-
+  ```
 
 * Kruskal
 
@@ -86,5 +77,5 @@
       return res;
   }
   ```
-  
-  [Kruskal最小生成树](https://www.acwing.com/problem/content/861/)
+
+    [Kruskal最小生成树](https://www.acwing.com/problem/content/861/)
