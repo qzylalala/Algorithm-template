@@ -14,6 +14,7 @@
   }
   
   // 求1号点到n号点的最短路距离，如果从1号点无法走到n号点则返回-1
+  // spfa 可以用栈代替队列(TLE时可以换一下试一试)
   int spfa() {
       memset(dist, 0x3f, sizeof dist);
       dist[1] = 0;
@@ -77,4 +78,5 @@
   else printf("%d", d[a][b]);
   ```
   
+
 [Floyd求最短路](https://www.acwing.com/problem/content/856/)
