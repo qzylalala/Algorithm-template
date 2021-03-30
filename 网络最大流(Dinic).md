@@ -30,6 +30,45 @@
 
 
 
+### 知识点梳理
+
+```markdown
+1. 基本概念
+    1.1 流网络，不考虑反向边
+    1.2 可行流，不考虑反向边
+        1.2.1 两个条件：容量限制、流量守恒
+        1.2.2 可行流的流量指从源点流出的流量 - 流入源点的流量
+        1.2.3 最大流是指最大可行流
+    1.3 残留网络，考虑反向边，残留网络的可行流f' + 原图的可行流f = 原题的另一个可行流
+        (1) |f' + f| = |f'| + |f|
+        (2) |f'| 可能是负数
+    1.4 增广路径
+    1.5 割
+        1.5.1 割的定义
+        1.5.2 割的容量，不考虑反向边，“最小割”是指容量最小的割。
+        1.5.3 割的流量，考虑反向边，f(S, T) <= c(S, T)
+        1.5.4 对于任意可行流f，任意割[S, T]，|f| = f(S, T)
+        1.5.5 对于任意可行流f，任意割[S, T]，|f| <= c(S, T)
+        1.5.6 最大流最小割定理
+            (1) 可以流f是最大流
+            (2) 可行流f的残留网络中不存在增广路
+            (3) 存在某个割[S, T]，|f| = c(S, T)
+    1.6. 算法
+        1.6.1 EK O(nm^2)
+        1.6.2 Dinic O(n^2m)
+    1.7 应用
+        1.7.1 二分图
+            (1) 二分图匹配
+            (2) 二分图多重匹配
+        1.7.2 上下界网络流
+            (1) 无源汇上下界可行流
+            (2) 有源汇上下界最大流
+            (3) 有源汇上下界最小流
+        1.7.3 多源汇最大流
+```
+
+
+
 
 ### Dinic算法
 
@@ -46,91 +85,83 @@
 ### 代码实现(固定风格)
 
 ```c++
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
 using namespace std;
-typedef long long LL;
 
-const LL inf = INT_MAX;
-const int N = 520010;
-int n, m, s, t, now[N];
-LL idx = 1, h[N], ne[N], e[N], val[N], dep[N];
+const int N = 10010, M = 200010, INF = 1e8;
 
-void add(int u, int v, LL w) {
-	e[++idx] = v;
-	val[idx] = w;
-	ne[idx] = h[u];
-	h[u] = idx;
+int n, m, S, T;
+int h[N], e[M], f[M], ne[M], idx; // f[N] 为 容量
+int q[N], d[N], cur[N]; // 队列   深度   当前弧
+
+void add(int a, int b, int c) {
+    e[idx] = b, f[idx] = c, ne[idx] = h[a], h[a] = idx ++ ;
+    e[idx] = a, f[idx] = 0, ne[idx] = h[b], h[b] = idx ++ ;
 }
 
-
-int bfs() {  //在残量网络中构造分层图 
-	for(int i = 1; i <= n; i++) dep[i] = inf;
+bool bfs() {
+    int hh = 0, tt = 0;
+    memset(d, -1, sizeof d);
+    q[0] = S, d[S] = 0, cur[S] = h[S];
     
-	queue<int> q;
-	q.push(s);
-	dep[s] = 0;
-	now[s] = h[s];
-    // bfs 分层
-	while(!q.empty()) {
-		int x = q.front();
-		q.pop();
-		for(int i = h[x]; i != -1; i = ne[i]) {   // 循环逻辑看上面 head 注释
-			int v = e[i];
-			if(val[i] > 0 && dep[v] == inf) {   // 正向边 且 节点 v 未访问过
-				q.push(v);
-				now[v] = h[v];
-				dep[v] = dep[x] + 1;              // 深度计算
-				if(v == t) return 1; // 到达汇点, 结束
-			}
-		}
-	}
-	return 0;
+    while (hh <= tt) {
+        int t = q[hh ++ ];
+        for (int i = h[t]; ~i; i = ne[i]) {
+            int ver = e[i];
+            if (d[ver] == -1 && f[i]) {
+                d[ver] = d[t] + 1;
+                cur[ver] = h[ver];
+                if (ver == T)  return true;
+                q[ ++ tt] = ver;
+            }
+        }
+    }
+    
+    return false;
 }
 
+int find(int u, int limit) {
+    if (u == T) return limit;
+    int flow = 0;
+    
+    for (int i = cur[u]; ~i && flow < limit; i = ne[i]) {
+        cur[u] = i;  // 当前弧优化
+        int ver = e[i];
+        if (d[ver] == d[u] + 1 && f[i]) {
+            int t = find(ver, min(f[i], limit - flow));
+            if (!t) d[ver] = -1;
+            f[i] -= t, f[i ^ 1] += t, flow += t;
+        }
+    }
+    
+    return flow;
+}
 
-int dfs(int x, long long sum) {  //sum是整条增广路对最大流的贡献
-	if(x == t) return sum;  // 到达汇点
-	long long k, res = 0;  //k是当前最小的剩余容量 
-	for(int i = now[x]; i != -1 && sum; i = ne[i]) {
-		now[x] = i;  //当前弧优化 
-		int v = e[i];
-		if(val[i] > 0 && (dep[v] == dep[x] + 1)) {
-			k = dfs(v, min(sum, val[i]));
-			if(k == 0) dep[v] = inf;  //剪枝，去掉增广完毕的点 
-			val[i] -= k;
-			val[i^1] += k;
-			res += k;  //res表示经过该点的所有流量和（相当于流出的总量） 
-			sum -= k;  //sum表示经过该点的剩余流量 
-		}
-	}
-	return res;
+int dinic() {
+    int r = 0, flow;
+    while (bfs()) {  // 存在增广路时循环继续
+        while (flow = find(S, INF)) r += flow;
+    }
+    return r;
 }
 
 int main() {
-    // 1. 初始化
-    memset(h, -1, sizeof(h));
-    scanf("%d%d%d%d",&n,&m,&s,&t);
-    for(int i = 1; i <= m;i++) {
-	int u, v;
-	LL w;
-	scanf("%d%d%lld", &u, &v, &w);
-	add(u, v, w);
-	add(v, u, 0);
+    scanf("%d%d%d%d", &n, &m, &S, &T);
+    memset(h, -1, sizeof h);
+    while (m -- ) {
+        int a, b, c;
+        scanf("%d%d%d", &a, &b, &c);
+        add(a, b, c);
     }
-    
-    // 2. bfs 分层   +   dfs 寻找增广路(回溯时 更新边权)
-    LL ans = 0;
-    while(bfs()) {
-	ans += dfs(s, inf);  //流量守恒（流入=流出） 
-    }
-    printf("%lld",ans);
+
+    printf("%d\n", dinic());
+
     return 0;
 }
 ```
-
-
-
-
 
 [最大流模板题](https://www.luogu.com.cn/problem/P3376)
 
