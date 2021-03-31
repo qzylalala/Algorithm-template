@@ -272,3 +272,118 @@ int main() {
     return 0;
 }
 ```
+
+
+
+
+
+### 有源汇上下界最大流
+
+```markdown
+问题描述
+    给定一个包含 n 个点 m 条边的有向图，每条边都有一个流量下界和流量上界。
+    给定源点 S 和汇点 T，求源点到汇点的最大流。
+
+输入格式
+	第一行包含四个整数 n,m,S,T。接下来 m 行，每行包含四个整数 a,b,c,d 表示点 a 和 b 之间存在一条有向边，该边的流量下界为 c，流量上界为 d。点编号从 1 到 n。
+
+输出格式
+	输出一个整数表示最大流。如果无解，则输出 No Solution。
+```
+
+```c++
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+const int N = 210, M = (N + 10000) * 2, INF = 1e8;
+
+int n, m, S, T;
+int h[N], e[M], f[M], ne[M], idx;
+int q[N], d[N], cur[N], A[N];
+
+void add(int a, int b, int c) {
+    e[idx] = b, f[idx] = c, ne[idx] = h[a], h[a] = idx ++ ;
+    e[idx] = a, f[idx] = 0, ne[idx] = h[b], h[b] = idx ++ ;
+}
+
+bool bfs() {
+    int hh = 0, tt = 0;
+    memset(d, -1, sizeof d);
+    q[0] = S, d[S] = 0, cur[S] = h[S];
+    while (hh <= tt) {
+        int t = q[hh ++ ];
+        for (int i = h[t]; ~i; i = ne[i]) {
+            int ver = e[i];
+            if (d[ver] == -1 && f[i]) {
+                d[ver] = d[t] + 1;
+                cur[ver] = h[ver];
+                if (ver == T) return true;
+                q[ ++ tt] = ver;
+            }
+        }
+    }
+    return false;
+}
+
+int find(int u, int limit) {
+    if (u == T) return limit;
+    int flow = 0;
+    for (int i = cur[u]; ~i && flow < limit; i = ne[i]) {
+        cur[u] = i;
+        int ver = e[i];
+        if (d[ver] == d[u] + 1 && f[i]) {
+            int t = find(ver, min(f[i], limit - flow));
+            if (!t) d[ver] = -1;
+            f[i] -= t, f[i ^ 1] += t, flow += t;
+        }
+    }
+    return flow;
+}
+
+int dinic() {
+    int r = 0, flow;
+    while (bfs()) while (flow = find(S, INF)) r += flow;
+    return r;
+}
+
+int main() {
+    int s, t;
+    scanf("%d%d%d%d", &n, &m, &s, &t);
+    S = 0, T = n + 1;
+    memset(h, -1, sizeof h);
+    while (m -- ) {
+        int a, b, c, d;
+        scanf("%d%d%d%d", &a, &b, &c, &d);
+        add(a, b, d - c);
+        A[a] -= c, A[b] += c;
+    }
+
+    int tot = 0;
+    for (int i = 1; i <= n; i ++ )
+        if (A[i] > 0) add(S, i, A[i]), tot += A[i];
+        else if (A[i] < 0) add(i, T, -A[i]);
+
+    add(t, s, INF); // 先以 s, t 为源点(注意到这是最后增加的两条边, 输出结果时会用到这个地方)
+    
+    if (dinic() < tot) puts("No Solution");
+    else {
+        int res = f[idx - 1];
+        S = s, T = t;
+        f[idx - 1] = f[idx - 2] = 0;
+        printf("%d\n", res + dinic());
+        
+        /* 有源汇上下界最小流 只需要修改这里即可
+        int res = f[idx - 1];
+        S = t, T = s;
+        f[idx - 1] = f[idx - 2] = 0;
+        printf("%d\n", res - dinic());
+        */
+    }
+
+    return 0;
+}
+```
+
