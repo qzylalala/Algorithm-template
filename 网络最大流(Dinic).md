@@ -442,3 +442,97 @@ int main() {
 }
 ```
 
+
+
+### 费用流
+
+```markdown
+问题描述
+    给定一个包含 n 个点 m 条边的有向图，并给定每条边的容量和费用，边的容量非负。
+    图中可能存在重边和自环，保证费用不会存在负环。
+    求从 S 到 T 的最大流，以及在流量最大时的最小费用。
+
+输入格式
+    第一行包含四个整数 n,m,S,T。接下来 m 行，每行三个整数 u,v,c,w，表示从点 u 到点 v 存在一条有向边，容量为 c，费用为 w。点的编号从 1 到 n。
+
+输出格式
+    输出点 S 到点 T 的最大流和流量最大时的最小费用。
+    如果从点 S 无法到达点 T 则输出 0 0。
+```
+
+```c++
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+const int N = 5010, M = 100010, INF = 1e8;
+
+int n, m, S, T;
+int h[N], e[M], f[M], w[M], ne[M], idx;
+int q[N], d[N], pre[N], incf[N];
+bool st[N];
+
+void add(int a, int b, int c, int d) {
+    e[idx] = b, f[idx] = c, w[idx] = d, ne[idx] = h[a], h[a] = idx ++ ;
+    e[idx] = a, f[idx] = 0, w[idx] = -d, ne[idx] = h[b], h[b] = idx ++ ;  // w[idx] = -d : 退流
+}
+
+bool spfa() { // 找最短增广路
+    int hh = 0, tt = 1;
+    memset(d, 0x3f, sizeof d);
+    memset(incf, 0, sizeof incf);
+    q[0] = S, d[S] = 0, incf[S] = INF;
+    while (hh != tt) {
+        int t = q[hh ++ ];
+        if (hh == N) hh = 0;
+        st[t] = false;
+
+        for (int i = h[t]; ~i; i = ne[i]) {
+            int ver = e[i];
+            if (f[i] && d[ver] > d[t] + w[i]) {
+                d[ver] = d[t] + w[i];
+                pre[ver] = i;
+                incf[ver] = min(f[i], incf[t]);
+                if (!st[ver]) {
+                    q[tt ++ ] = ver;
+                    if (tt == N) tt = 0;
+                    st[ver] = true;
+                }
+            }
+        }
+    }
+
+    return incf[T] > 0;
+}
+
+void EK(int& flow, int& cost) {
+    flow = cost = 0;
+    while (spfa()) {
+        int t = incf[T];
+        flow += t, cost += t * d[T];
+        for (int i = T; i != S; i = e[pre[i] ^ 1]) {
+            f[pre[i]] -= t;
+            f[pre[i] ^ 1] += t;
+        }
+    }
+}
+
+int main() {
+    scanf("%d%d%d%d", &n, &m, &S, &T);
+    memset(h, -1, sizeof h);
+    while (m -- ) {
+        int a, b, c, d;
+        scanf("%d%d%d%d", &a, &b, &c, &d);
+        add(a, b, c, d);
+    }
+
+    int flow, cost;
+    EK(flow, cost);
+    printf("%d %d\n", flow, cost);
+
+    return 0;
+}
+```
+
