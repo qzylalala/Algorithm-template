@@ -74,5 +74,16 @@
           else c[i][j] = (c[i - 1][j] + c[i - 1][j - 1]);
   ```
 
+* 欧几里得算法
+  ```c++
+  LL exgcd(LL a, LL b, LL &x, LL &y)  // 扩展欧几里得算法, 求x, y，使得ax + by = gcd(a, b) {
+      if (!b) {
+          x = 1; y = 0;
+          return a;
+      }
+      LL d = exgcd(b, a % b, y, x);
+      y -= (a / b) * x;
+      return d;
+  }
   
 
