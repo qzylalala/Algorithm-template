@@ -76,7 +76,9 @@
 
 * 欧几里得算法
   ```c++
-  LL exgcd(LL a, LL b, LL &x, LL &y) {  // 扩展欧几里得算法, 求x, y，使得ax + by = gcd(a, b)
+  // 扩展欧几里得算法, 求x, y，使得ax + by = gcd(a, b)
+  // 返回值为 gcd(a, b）
+  LL exgcd(LL a, LL b, LL &x, LL &y) {
       if (!b) {
           x = 1; y = 0;
           return a;
@@ -85,5 +87,4 @@
       y -= (a / b) * x;
       return d;
   }
-  
 
