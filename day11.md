@@ -4,6 +4,7 @@
 
   ```c++
   // 时间复杂度是 O(n^2 + m), n表示点数，m表示边数
+  const int INF = 0x3f3f3f3f;
   int n;      // n表示点数
   int g[N][N];        // 邻接矩阵，存储所有边
   int dist[N];        // 存储其他点到当前最小生成树的距离
@@ -40,6 +41,7 @@
 
   ```c++
   // 时间复杂度是 O(mlogm), n表示点数，m表示边数
+  const int INF = 0x3f3f3f3f;
   int n, m;       // n是点数，m是边数
   int p[N];       // 并查集的父节点数组
   
