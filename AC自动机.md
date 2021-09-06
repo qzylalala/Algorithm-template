@@ -63,7 +63,7 @@ void Get_fail()//构造fail指针
 
 int query(string s)//AC自动机匹配
 {
-        int l = s.length();
+        int len = s.length();
         int now = 0,ans = 0;
         for(int i = 0; i < len; ++i)
         {
@@ -71,7 +71,7 @@ int query(string s)//AC自动机匹配
                 for(int t = now; t && AC[t].end != -1; t = AC[t].fail)//循环求解
                 {
                          ans += AC[t].end;
-                         AC[t].end = -1;
+                         AC[t].end = -1; // 这里是由于同一字符串只出现一次(一般不需要这一行)
                 } 
         }
         return ans;
