@@ -42,6 +42,7 @@
           }
       }
 
+      // 如果dist[n] == 0x3f3f3f3f 则表示不存在路径到 n
       return dist[n];
   }
   ```
