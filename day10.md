@@ -9,6 +9,7 @@
   bool st[N];     // 存储每个点是否在队列中
   
   // 图的构建, 邻接表存储
+  // 加边函数一定记得 memset(h, -1, sizeof(h));
   void add(int a, int b, int c) {
       e[idx] = b, w[idx] = c, ne[idx] = h[a], h[a] = idx ++ ;
   }
@@ -40,8 +41,7 @@
               }
           }
       }
-  
-      if (dist[n] == 0x3f3f3f3f) return -1;
+
       return dist[n];
   }
   ```
