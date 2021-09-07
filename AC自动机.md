@@ -8,6 +8,8 @@
 
 [Fail指针讲解](https://blog.csdn.net/wyxeainn/article/details/77430218)
 
+[AC自动机](https://www.cnblogs.com/nullzx/p/7499397.html)
+
 
 
 ### 代码部分
