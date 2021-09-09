@@ -41,6 +41,39 @@
   }
   ```
   
+  
+  ```c++
+  class Solution {
+  public:
+      int vis[101], color[101];
+      queue<int> q;
+      bool bfs(int u, vector<vector<int>> &graph){
+          q.push(u); 
+          color[u] = 1;
+          while (!q.empty()){
+              int u = q.front();
+              q.pop();
+              for (auto v : graph[u]){
+                  if (color[v] != 0){
+                      if (color[v] == color[u]) return false;
+                  }
+                  else{
+                      q.push(v);
+                      color[v] = (color[u] == 1)? 2 : 1;
+                  }
+              }
+          }
+          return true;
+      }
+      bool isBipartite(vector<vector<int>>& graph) {
+          for (int i = 0; i < graph.size(); ++i){
+              if (!color[i] && !bfs(i, graph)) return false;
+          }
+          return true;
+      }
+  };
+  ```
+  
   [染色法判定二分图](https://www.acwing.com/problem/content/862/)
 
 
