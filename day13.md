@@ -19,7 +19,7 @@ int main() {
     cin >> n >> m;
     for (int i = 1; i <= n; ++i) cin >> v[i] >> w[i];    
     
-    // 状态转移方程 dp[i][j] = max(dp[i-1][j-w] + v, dp[i-1][j-w])
+    // 状态转移方程 dp[i][j] = max(dp[i-1][j-w] + v, dp[i-1][j])
     // 优化版本, 注意第二层循环, 思考优化的根据
     for (int i = 1; i <= n; ++i)
         for (int j = m; j >= v[i]; --j)
