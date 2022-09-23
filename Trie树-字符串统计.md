@@ -93,3 +93,58 @@ int main()
 ```
 
 [模板在这里~~](https://github.com/qzylalala/Algotithm-template/blob/master/day5.md)
+
+
+
+### C++ 模板
+
+```c++
+struct Trie {
+    static constexpr int N = 1000010, M = 26;
+    int tot;
+    int tr[N][M];
+    int ends[N], prefix[N];
+    void clear() {
+        for(int i = 0; i <= tot; i++) memset(tr[i], 0, sizeof(tr[i]));
+        for(int i = 0; i <= tot; i++) ends[i] = prefix[i] = 0;
+        tot = 0; ends[0] = 0;
+    }
+    Trie() { tot = 0; }
+    void insert(string &s) {
+        int p = 0;
+        for(auto &ch : s) {
+            int c = ch - 'a';
+            if(tr[p][c] == 0) tr[p][c] = ++tot;
+            p = tr[p][c];
+            prefix[p] ++;
+        }
+        ends[p] ++;
+    }
+    int get(string &s) {
+        int p = 0, res = 0;
+        for(auto &ch : s) {
+            int c = ch - 'a';
+            if (tr[p][c] == 0) break;
+            p = tr[p][c];
+            res += prefix[p];
+        }
+        return res;
+    }
+}tr;
+
+class Solution {
+public:
+    vector<int> sumPrefixScores(vector<string>& words) {
+        tr.clear();
+        for (auto &s : words) {
+            tr.insert(s);
+        }
+        vector<int> res;
+        for (auto &s : words) {
+            res.push_back(tr.get(s));
+        }
+        return res;
+    }
+};
+```
+
